@@ -69,17 +69,22 @@
 (defn get-old-state [request]
   (:state (parse-cookie (.get request "Cookie"))))
 
+(defn- handle-post-request [request]
+  (let [body (.getBody request)
+        old-state (get-old-state request)
+        selection (second (str/split (String. ^bytes body) #"="))
+        state (get-state old-state selection)]
+    (build-response state)))
+
+(defn- handle-get-request [_]
+  (let [state (initializer/parse-args ["--tui"])]
+    (build-response state)))
+
 (deftype TttRouteHandler []
   RouteHandler
 
   (handle [_ request]
     (let [method (.get request "method")]
       (if (= method "POST")
-        (let [body (.getBody request)
-              old-state (get-old-state request)
-              selection (second (str/split (String. body) #"="))
-              state (get-state old-state selection)]
-          (build-response state))
-
-        (let [state (initializer/parse-args ["--tui"])]
-          (build-response state))))))
+        (handle-post-request request)
+        (handle-get-request request)))))

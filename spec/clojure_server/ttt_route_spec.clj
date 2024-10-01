@@ -109,7 +109,9 @@
       (should-contain "<h1>tic-tac-toe</h1>" (String. ^bytes (sut/build-response (initializer/parse-args ["--tui"])))))
 
     (it "returns a single printable wrapped in <h3>"
-      (should-contain "<h3>Who will play as X?</h3>" (String. ^bytes (sut/build-response {:printables ["Who will play as X?"]}))))
+      (let [state {:printables ["Who will play as X?"]}]
+        (should-contain "<h3>Who will play as X?</h3>" (String. ^bytes (sut/build-response state)))
+        (should-not-contain "<h3>1. Human</h3>" (String. ^bytes (sut/build-response state)))))
 
     (it "returns multiple printables wrapped in <h3>"
       (let [state {:printables ["Who will play as X?" "1. Human" "2. Computer"]}]
@@ -118,22 +120,22 @@
         (should-contain "<h3>2. Computer</h3>" (String. ^bytes (sut/build-response state)))))
 
     (it "contains a form that lets user submit selection"
-      (should-contain "<form action=\"/ttt\" method=\"POST\">" (String. ^bytes (sut/build-response {})))
-      (should-contain "<input type=\"number\" id=\"selection\" name=\"selection\"><br><br>" (String. ^bytes (sut/build-response {})))
-      (should-contain "<input type=\"submit\" value=\"Submit\">" (String. ^bytes (sut/build-response {})))
-      (should-contain "</form>" (String. ^bytes (sut/build-response {}))))
+      (let [state {}]
+        (should-contain "<form action=\"/ttt\" method=\"POST\">" (String. ^bytes (sut/build-response state)))
+        (should-contain "<input type=\"number\" id=\"selection\" name=\"selection\"><br><br>" (String. ^bytes (sut/build-response state)))
+        (should-contain "<input type=\"submit\" value=\"Submit\">" (String. ^bytes (sut/build-response state)))
+        (should-contain "</form>" (String. ^bytes (sut/build-response state)))))
 
     (it "does not contain a form that lets user submit selection if end-game? = true"
-      (should-not-contain "<form action=\"/ttt\" method=\"POST\">" (String. ^bytes (sut/build-response {:end-game? true})))
-      (should-not-contain "<input type=\"number\" id=\"selection\" name=\"selection\"><br><br>" (String. ^bytes (sut/build-response {:end-game? true})))
-      (should-not-contain "<input type=\"submit\" value=\"Submit\">" (String. ^bytes (sut/build-response {:end-game? true})))
-      (should-not-contain "</form>" (String. ^bytes (sut/build-response {:end-game? true}))))
+      (let [state {:end-game? true}]
+        (should-not-contain "<form action=\"/ttt\" method=\"POST\">" (String. ^bytes (sut/build-response state)))
+        (should-not-contain "<input type=\"number\" id=\"selection\" name=\"selection\"><br><br>" (String. ^bytes (sut/build-response state)))
+        (should-not-contain "<input type=\"submit\" value=\"Submit\">" (String. ^bytes (sut/build-response state)))
+        (should-not-contain "</form>" (String. ^bytes (sut/build-response state)))))
 
     (it "adds a state cookie in the header"
       (should-contain "\r\nSet-Cookie: state={}; Path=/; HttpOnly" (first (str/split (String. ^bytes (sut/build-response {})) #"\r\n\r\n")))
-      (should-contain "\r\nSet-Cookie: state={:printables [\"hello\"]}; Path=/; HttpOnly" (first (str/split (String. ^bytes (sut/build-response {:printables ["hello"]})) #"\r\n\r\n")))
-      )
+      (should-contain "\r\nSet-Cookie: state={:printables [\"hello\"]}; Path=/; HttpOnly" (first (str/split (String. ^bytes (sut/build-response {:printables ["hello"]})) #"\r\n\r\n"))))
     )
-
   )
 
