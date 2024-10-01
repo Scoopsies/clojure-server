@@ -5,13 +5,18 @@
             [tic-tac-toe.state-initializer :as initializer]
             [clojure.string :as str]))
 
+(defn- maybe-get-form [state]
+  (if (:end-game? state)
+    ""
+    (str "<form action=\"/ttt\" method=\"POST\">"
+         "<input type=\"number\" id=\"selection\" name=\"selection\"><br><br>"
+         "<input type=\"submit\" value=\"Submit\">"
+         "</form>")))
+
 (defn build-body [state]
   (str "<h1>tic-tac-toe</h1>\n"
        (apply str (mapv #(str "<h3>" % "</h3>") (:printables state)))
-       (str "<form action=\"/ttt\" method=\"POST\">"
-            "<input type=\"number\" id=\"selection\" name=\"selection\"><br><br>"
-            "<input type=\"submit\" value=\"Submit\">"
-            "</form>")))
+       (maybe-get-form state)))
 
 (defn- get-base-response [state]
   (let [body (build-body state)]
@@ -29,18 +34,20 @@
     (add-cookie state base-response)))
 
 (defn- human-turn? [old-state]
-  (and (:board old-state) (= :human (moves/get-move-param old-state))))
+  (and (:board old-state)
+       (= :human (moves/get-move-param old-state))
+       (not (:game-over? old-state))))
 
 (defn- get-selection [old-state selection]
   (cond
     (human-turn? old-state) (- (Integer/parseInt selection) 1)
-    (:board old-state) (moves/pick-move old-state)
+    (and (:board old-state) (not (:game-over? old-state))) (moves/pick-move old-state)
     :else selection))
 
 (defn get-state [old-state selection]
   (let [selection (get-selection old-state selection)
         updated-state (game/get-next-state old-state selection)]
-    (if (or (human-turn? updated-state) (not (:board updated-state)))
+    (if (or (human-turn? updated-state) (not (:board updated-state)) (:game-over? updated-state))
       updated-state
       (recur updated-state selection))))
 
@@ -70,7 +77,7 @@
       (if (= method "POST")
         (let [body (.getBody request)
               old-state (get-old-state request)
-              selection (if (empty? body) "0" (second (str/split (String. body) #"=")))
+              selection (second (str/split (String. body) #"="))
               state (get-state old-state selection)]
           (build-response state))
 
