@@ -1,0 +1,8 @@
+{:paths   ["src" "lib"]
+ :deps    {org.clojure/clojure    {:mvn/version "1.12.0"}
+           com.cleanCoders/Server {:local/root "lib/HttpServer.jar"}
+           ttt/ttt {:local/root "lib/TicTacToe.jar"}}
+ :aliases {:test {:extra-deps  {speclj/speclj {:mvn/version "3.5.0"}}
+                  :extra-paths ["spec"]}
+           :spec {:main-opts ["-m" "speclj.main" "-c" "-t" "~slow"]}
+           :run  {:main-opts ["-m" "clojure-server.main"]}}}
