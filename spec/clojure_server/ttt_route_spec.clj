@@ -24,8 +24,7 @@
 
 (describe "ttt-route"
 
-  (before (reset! data-io/data-store :memory)
-          )
+  (before (reset! data-io/data-store :memory))
 
   (context "parse-cookie"
     (it "returns a single cookie request"
@@ -82,6 +81,11 @@
           (should= ["X" 1 2 3 "O" 5 6 7 8] (:board (sut/get-state old-state "1"))))
         ))
 
+    (context "ai v ai"
+      (let [old-state {:ui :tui "O" :hard "X" :hard}]
+        (it "returns a played game of ai"
+          (should= ["X" "O" "X" "X" "O" "O" "O" "X" "X"] (:board (sut/get-state old-state "1"))))))
+
     (context "play again menu"
       (it "updates to a new game if user selects 1"
         (sut/get-state {"X" :human "O" :human :board ["X" "X" 2 "O" "O" 5 6 7 8]} "3")
@@ -136,6 +140,13 @@
     (it "adds a state cookie in the header"
       (should-contain "\r\nSet-Cookie: state={}; Path=/; HttpOnly" (first (str/split (String. ^bytes (sut/build-response {})) #"\r\n\r\n")))
       (should-contain "\r\nSet-Cookie: state={:printables [\"hello\"]}; Path=/; HttpOnly" (first (str/split (String. ^bytes (sut/build-response {:printables ["hello"]})) #"\r\n\r\n"))))
+    )
+
+  (context "build-body"
+    (it "displays the board on game-over screen"
+      (let [state {:game-over? true, :board-size :3x3, :printables ["X wins!" "" "Play Again?" "1. Yes" "2. No"], :ui :tui, :id 124, "O" :human, :move-order [0 1 3 4 6], "X" :human, :board ["X" "O" 2 "X" "O" 5 "X" 7 8]}]
+        (should-contain (str "<h3>" (first (printables/get-board-printables (:board state))) "</h3>")
+                        (sut/build-body state))))
     )
   )
 

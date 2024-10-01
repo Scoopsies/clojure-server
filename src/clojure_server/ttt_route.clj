@@ -2,6 +2,7 @@
   (:import (com.cleanCoders RouteHandler ResponseBuilder))
   (:require [tic-tac-toe.play-game :as game]
             [tic-tac-toe.moves.core :as moves]
+            [tic-tac-toe.printables :as printables]
             [tic-tac-toe.state-initializer :as initializer]
             [clojure.string :as str]))
 
@@ -15,6 +16,7 @@
 
 (defn build-body [state]
   (str "<h1>tic-tac-toe</h1>\n"
+       (if (:game-over? state) (apply str (mapv #(str "<h3>" % "</h3>") (printables/get-board-printables (:board state)))) "")
        (apply str (mapv #(str "<h3>" % "</h3>") (:printables state)))
        (maybe-get-form state)))
 
