@@ -2,6 +2,7 @@
   (:require [clojure.string :as str]
             [speclj.core :refer :all]
             [clojure-server.ttt-route :as sut]
+            [tic-tac-toe.board :as board]
             [tic-tac-toe.data.data-io :as data-io]
             [tic-tac-toe.state-initializer :as initializer]
             [tic-tac-toe.printables :as printables])
@@ -143,10 +144,27 @@
     )
 
   (context "build-body"
-    (it "displays the board on game-over screen"
-      (let [state {:game-over? true, :board-size :3x3, :printables ["X wins!" "" "Play Again?" "1. Yes" "2. No"], :ui :tui, :id 124, "O" :human, :move-order [0 1 3 4 6], "X" :human, :board ["X" "O" 2 "X" "O" 5 "X" 7 8]}]
-        (should-contain (str "<h3>" (first (printables/get-board-printables (:board state))) "</h3>")
-                        (sut/build-body state))))
+    (it "displays all of the boards played on the game-over screen if ai v ai"
+      (let [state {:game-over? true, :board-size :3x3, :printables ["X wins!" "" "Play Again?" "1. Yes" "2. No"], :ui :tui, :id 124, "O" :hard, :move-order [0 1 3 4 6], "X" :hard, :board ["X" "O" 2 "X" "O" 5 "X" 7 8]}]
+        (should-contain (str "<h3>" (first (printables/get-board-printables (:board state))) "</h3>") (sut/build-body state))
+        (should-contain (str "<h3>" (first (printables/get-board-printables ["X" 1 2 3 4 5 6 7 8])) "</h3>") (sut/build-body state))))
+
+    (it "displays only the final board if there was a human player"
+      (let [state {:game-over? true, :board-size :3x3, :printables ["X wins!" "" "Play Again?" "1. Yes" "2. No"], :ui :tui, :id 124, "O" :hard, :move-order [0 1 3 4 6], "X" :human, :board ["X" "O" 2 "X" "O" 5 "X" 7 8]}]
+        (should-contain (str "<h3>" (first (printables/get-board-printables (:board state))) "</h3>") (sut/build-body state))
+        (should-not-contain (str "<h3>" (first (printables/get-board-printables ["X" 1 2 3 4 5 6 7 8])) "</h3>") (sut/build-body state))))
+    )
+
+  (context "get-all-boards"
+    (it "returns list of one move game boards on a :3x3"
+      (should= [["X" 1 2 3 4 5 6 7 8]] (sut/get-all-boards {:board-size :3x3 :move-order [0]}))
+      (should= [[0 "X" 2 3 4 5 6 7 8]] (sut/get-all-boards {:board-size :3x3 :move-order [1]})))
+
+    (it "returns list of one move game boards on a :4x4"
+      (should= [(board/update-board 0 (range 16))] (sut/get-all-boards {:board-size :4x4 :move-order [0]})))
+
+    (it "returns a list of two move game boards"
+      (should= [["X" 1 2 3 4 5 6 7 8] ["X" "O" 2 3 4 5 6 7 8]] (sut/get-all-boards {:board-size :3x3 :move-order [0 1]})))
     )
   )
 

@@ -1,6 +1,7 @@
 (ns clojure-server.ttt-route
   (:import (com.cleanCoders RouteHandler ResponseBuilder))
-  (:require [tic-tac-toe.play-game :as game]
+  (:require [tic-tac-toe.board :as board]
+            [tic-tac-toe.play-game :as game]
             [tic-tac-toe.moves.core :as moves]
             [tic-tac-toe.printables :as printables]
             [tic-tac-toe.state-initializer :as initializer]
@@ -14,10 +15,37 @@
          "<input type=\"submit\" value=\"Submit\">"
          "</form>")))
 
+(defn- ->html [printable]
+  (apply str (mapv #(str "<h3>" % "</h3>") printable)))
+
+(defn get-all-boards
+  ([state] (get-all-boards (:move-order state) (board/create-board (:board-size state)) []))
+
+  ([move-order board result]
+   (if (empty? move-order)
+     result
+     (let [updated-board (board/update-board (first move-order) board)]
+       (recur (rest move-order) updated-board (conj result updated-board))))))
+
+(defn- ai-v-ai? [state]
+  (and (not (= :human (state "X"))) (not (= :human (state "O")))))
+
+(defn- all-boards-to-html [state]
+  (->> (get-all-boards state)
+       (mapv printables/get-board-printables)
+       (mapv #(conj % "<br>"))
+       (flatten)
+       (->html)))
+
+(defn- get-game-over-board [state]
+  (cond (not (:game-over? state)) ""
+        (ai-v-ai? state) (all-boards-to-html state)
+        :else (->html (printables/get-board-printables (:board state)))))
+
 (defn build-body [state]
   (str "<h1>tic-tac-toe</h1>\n"
-       (if (:game-over? state) (apply str (mapv #(str "<h3>" % "</h3>") (printables/get-board-printables (:board state)))) "")
-       (apply str (mapv #(str "<h3>" % "</h3>") (:printables state)))
+       (get-game-over-board state)
+       (->html (:printables state))
        (maybe-get-form state)))
 
 (defn- get-base-response [state]
