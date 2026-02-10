@@ -1,9 +1,9 @@
 (ns clojure-server.ttt-route
   (:import (com.cleanCoders RouteHandler ResponseBuilder))
-  (:require [tic-tac-toe.board :as board]
-            [tic-tac-toe.play-game :as game]
-            [tic-tac-toe.moves.core :as moves]
-            [tic-tac-toe.printables :as printables]
+  (:require [tic-tac-toe.boardc :as board]
+            [tic-tac-toe.play-gamec :as game]
+            [tic-tac-toe.moves.corec :as moves]
+            [tic-tac-toe.printablesc :as printables]
             [tic-tac-toe.state-initializer :as initializer]
             [clojure.string :as str]))
 

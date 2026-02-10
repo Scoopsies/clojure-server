@@ -1,6 +1,6 @@
 (ns clojure-server.main
   (:require [clojure-server.ttt-route :as ttt]
-            [tic-tac-toe.data.data-io :as data-io])
+            [tic-tac-toe.data.data-ioc :as data-io])
   (:import
            (com.cleanCoders ArgParser Printables Router Server ServerSocket)
            (com.cleanCoders.routes FormRouteHandler
