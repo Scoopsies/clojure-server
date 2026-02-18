@@ -39,7 +39,7 @@ git clone https://github.com/Scoopsies/clojure-tic-tac-toe.git ../clojure-tic-ta
 ## Running
 
 ```bash
-clojure -M:run -x
+clj -M:run -x
 ```
 
 ## Running Tests

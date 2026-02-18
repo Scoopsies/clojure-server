@@ -3,6 +3,10 @@
   (:require [tic-tac-toe.boardc :as board]
             [tic-tac-toe.play-gamec :as game]
             [tic-tac-toe.moves.corec :as moves]
+            [tic-tac-toe.moves.easyc]
+            [tic-tac-toe.moves.mediumc]
+            [tic-tac-toe.moves.hardc]
+            [tic-tac-toe.moves.replayc]
             [tic-tac-toe.printablesc :as printables]
             [tic-tac-toe.state-initializer :as initializer]
             [clojure.string :as str]))

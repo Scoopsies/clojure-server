@@ -2,10 +2,10 @@
   (:require [clojure.string :as str]
             [speclj.core :refer :all]
             [clojure-server.ttt-route :as sut]
-            [tic-tac-toe.board :as board]
-            [tic-tac-toe.data.data-io :as data-io]
+            [tic-tac-toe.boardc :as board]
+            [tic-tac-toe.data.data-ioc :as data-io]
             [tic-tac-toe.state-initializer :as initializer]
-            [tic-tac-toe.printables :as printables])
+            [tic-tac-toe.printablesc :as printables])
   (:import (com.cleanCoders HttpRequest)
            (java.io ByteArrayInputStream)))
 

@@ -1,7 +1,7 @@
 (ns clojure-server.main-spec
   (:require [speclj.core :refer :all]
             [clojure-server.main :as sut]
-            [tic-tac-toe.data.data-io :as data-io])
+            [tic-tac-toe.data.data-ioc :as data-io])
   (:import (com.cleanCoders ArgParser Router)
            (com.cleanCoders.routes FormRouteHandler
                                    GuessRouteHandler
