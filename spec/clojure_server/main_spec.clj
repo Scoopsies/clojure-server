@@ -16,8 +16,12 @@
   (with-stubs)
 
   (context "data-io"
-    (it "sets the data storage method as :edn"
-      (should= :psql @data-io/data-store))
+    (it "sets the data storage method to :psql"
+      (reset! data-io/data-store :memory)
+      (with-redefs [sut/add-routes (stub :add-routes)
+                    sut/runnable? (stub :runnable? {:return false})]
+        (sut/-main)
+        (should= :psql @data-io/data-store)))
     )
 
   (context "add-routes"

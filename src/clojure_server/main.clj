@@ -9,8 +9,6 @@
                                    ListingRouteHandler
                                    PingRouteHandler)))
 
-(reset! data-io/data-store :psql)
-
 (defn add-route [router path route-handler]
   (.addRoute router path route-handler))
 
@@ -37,6 +35,7 @@
   (.getRunStatus arg-parser))
 
 (defn -main [& args]
+  (reset! data-io/data-store :psql)
   (let [router (Router.) arg-parser (ArgParser.)]
     (.parseArgs arg-parser (into-array String args))
     (add-routes router arg-parser)
