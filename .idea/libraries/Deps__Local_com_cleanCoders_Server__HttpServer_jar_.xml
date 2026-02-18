@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Deps: Local com.cleanCoders/Server (HttpServer.jar)">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/HttpServer.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
